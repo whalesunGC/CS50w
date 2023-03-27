@@ -1,0 +1,18 @@
+{% extends "encyclopedia/layout.html" %}
+{% load markdownify %}
+
+{% block title %}
+    Encyclopedia
+{% endblock %}
+
+{% block body %}
+    <div>
+        <form action="{% url 'create_page' %}", method="get">
+            <input type="hidden" name="title" value="{{ title }}">
+            <input type="hidden" name="content" value="{{ content }}">
+            <input type="hidden" name="status" value="edit">    
+            <input type="submit" value="Edit">
+        </form>
+    </div>
+    {{ content|markdownify|safe }}
+{% endblock %}
