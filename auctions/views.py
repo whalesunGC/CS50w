@@ -3,13 +3,16 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
-from .models import User
+from .forms import ListingForm
+from .models import Listing, Bid, User
 
 
 def index(request):
     '''display current active listings. Ordered by date posted.'''
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {
+        "listings": Listing.objects.all(),
+        "bid": Bid.objects.all(),
+    })
 
 
 def login_view(request):
@@ -63,16 +66,41 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
-def listing_create():
+def listing_create(request):
+    ''' display form to create new listings.'''
+    if request.method == "POST":
+        form = ListingForm(request.POST)
+        if form.is_valid():
+            # update auction model with name, category, image_url and bid_start
+            form.save()
+            return render(request, "auctions/create.html", {
+                "form": ListingForm(),
+                "status": "Your Listing Is UP!",
+            })
+        else:
+            return render(request, "auctions/create.html", {
+                "form":form,
+                "status": "Seems like there is something weird with the inputs..."
+            })
+    return render(request, "auctions/create.html" ,{
+        "form": ListingForm(),
+    })
+
     pass
 
-def listing_page():
-    pass
+def listing_page(request, pk):
+    ''' display selected listing.'''
+    print(Listing.objects.get(id=pk).description)
+    return render(request, "auctions/listing.html", {
+        "listing": Listing.objects.get(id=pk),
+    })
 
 def listing_filter():
+    '''  display all listings filtered by categories. '''
     pass
 
 def user_watchlist():
+    '''  display watchlist of logined user. '''
     pass
 
 def admin_interface():

@@ -2,6 +2,21 @@
 
 {% block body %}
     <h2>Active Listings</h2>
-
-    TODO
+    <hr>
+    <ul>
+        {% for listing in listings %}
+            {% if listing.open %}     
+                <li>
+                    <div><h4>{{ listing.name }}</h4></div>
+                    <div><h5>Category: {{ listing.category }}</h5></div>
+                    {% if bid.bid_value %}
+                    <div><h5>Current Bid: ${{ bid.bid_value }}</h5></div>
+                    {% else %}
+                    <div><h5>Starting Bid: ${{ listing.bid_start }}</h5></div>
+                    {% endif %}
+                    <div><a href="{% url 'listing' listing.id %}"><img src="{{ listing.image_url }}" alt="image of listing" width="400"></a></div>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
 {% endblock %}
