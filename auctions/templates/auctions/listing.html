@@ -10,10 +10,22 @@
             <input type="submit" value="Delete Listing">
         </form> 
     {% endif %}
-    <h4>Created by: {{listing.user.username}}</h4>    
+    <h4>Created by: {{ listing.user.username }}</h4>    
     <h4>{{ listing.name }}</h4>
     <h4>{{ listing.category }}</h4>
-    <h4>Starting Bid: ${{ listing.bid_start }}</h4>
+    {% if bid %}
+        <h4>Current Bid: ${{ bid }}</h4>
+        <h4>Bid by: {{ username }}</h4>
+    {% else %}
+        <h4>Starting Bid: ${{ listing.bid_start }}</h4>
+    {% endif %}
+    {% if user.is_authenticated %}
+        <form method="POST" action="">
+            {% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Make Bid">
+        </form>
+    {% endif %}
     <img src="{{ listing.image_url }}" alt="Listing image" width="400px">
     <div><span>{{ listing.description }}</span></div>
 {% endblock %}

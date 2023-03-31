@@ -3,15 +3,15 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from .forms import ListingForm
+from .forms import ListingForm, BidForm
 from .models import Listing, Bid, User
 
 
 def index(request):
     '''display current active listings. Ordered by date posted.'''
+    listing = Listing.objects.filter(open=True)
     return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all(),
-        "bid": Bid.objects.all(),
+        "listings": listing,
     })
 
 
@@ -116,8 +116,23 @@ def listing_delete(request, pk):
 
 def listing_page(request, pk):
     ''' display selected listing.'''
-    return render(request, "auctions/listing.html", {
-        "listing": Listing.objects.get(id=pk),
+    listing = Listing.objects.get(id=pk)
+    bid = Bid.objects.filter(listing_id=pk).order_by('-bid_value').values_list('bid_value', flat=True).first()
+    username = Bid.objects.filter(listing_id=pk).order_by('-bid_value').values_list('user__username', flat=True).first()
+    if request.method == 'POST':
+        form = BidForm(request.POST)
+        if form.is_valid():
+            bid = form.save(commit=False)
+            bid.listing_id = listing
+            bid.user = request.user
+            bid.save()
+            return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+    else:
+        return render(request, "auctions/listing.html", {
+        "listing": listing,
+        "bid" : bid,
+        "username" : username,
+        "form": BidForm(),
     })
 
 def listing_filter():
