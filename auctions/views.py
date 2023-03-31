@@ -86,11 +86,36 @@ def listing_create(request):
         "form": ListingForm(),
     })
 
-    pass
+def listing_edit(request, pk):
+    ''' display form to edit listings.'''
+    listing = Listing.objects.get(id=pk)
+    if request.method == "POST":
+        form = ListingForm(request.POST, instance=listing)
+        if form.is_valid():
+            form.save()
+            return render(request, "auctions/edit.html", {
+                "form": ListingForm(),
+                "status": "Your Listing Is Updated!",
+            })
+        else:
+            return render(request, "auctions/edit.html", {
+                "form":form,
+                "status": "Seems like there is something weird with the inputs..."
+            })
+    elif request.method == "GET":
+        form = ListingForm(instance=listing)
+        return render(request, "auctions/edit.html", {
+            "form":form,
+        })
+    
+def listing_delete(request, pk):
+    if request.method == "POST":
+        listing = Listing.objects.get(id=pk)
+        listing.delete()
+        return HttpResponseRedirect(reverse("index"))
 
 def listing_page(request, pk):
     ''' display selected listing.'''
-    print(Listing.objects.get(id=pk).description)
     return render(request, "auctions/listing.html", {
         "listing": Listing.objects.get(id=pk),
     })

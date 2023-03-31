@@ -1,6 +1,16 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
+    {% if user.is_authenticated and user.id == listing.user.id %}
+        <form method="GET" action="{% url 'edit' listing.id %}">
+            <input type="submit" value="Edit Listing">     
+        </form>
+        <form method="POST" action="{% url 'delete' listing.id%}">
+            {% csrf_token %}
+            <input type="submit" value="Delete Listing">
+        </form> 
+    {% endif %}
+    <h4>Created by: {{listing.user.username}}</h4>    
     <h4>{{ listing.name }}</h4>
     <h4>{{ listing.category }}</h4>
     <h4>Starting Bid: ${{ listing.bid_start }}</h4>

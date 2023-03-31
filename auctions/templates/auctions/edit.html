@@ -1,0 +1,13 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Edit Listings</h2>
+    <h3>{{ status }}</h3>
+    <div>
+        <form method="POST" action="">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" value="Confirm Edit">
+        </form>
+    </div>
+{% endblock %}
