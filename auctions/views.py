@@ -117,20 +117,28 @@ def listing_delete(request, pk):
 def listing_page(request, pk):
     ''' display selected listing.'''
     listing = Listing.objects.get(id=pk)
-    bid = Bid.objects.filter(listing_id=pk).order_by('-bid_value').values_list('bid_value', flat=True).first()
-    username = Bid.objects.filter(listing_id=pk).order_by('-bid_value').values_list('user__username', flat=True).first()
+    top_bid = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('bid_value', flat=True).first()
+    username = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('user__username', flat=True).first()
+    
     if request.method == 'POST':
-        form = BidForm(request.POST)
+        form = BidForm(request.POST, listing=listing, top_bid=top_bid)
         if form.is_valid():
             bid = form.save(commit=False)
-            bid.listing_id = listing
+            bid.listing = listing
             bid.user = request.user
             bid.save()
             return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+        else:
+            return render(request, "auctions/listing.html", {
+                "listing" : listing,
+                "bid" : top_bid,
+                "username" : username,
+                "form": form
+            })
     else:
         return render(request, "auctions/listing.html", {
         "listing": listing,
-        "bid" : bid,
+        "bid" : top_bid,
         "username" : username,
         "form": BidForm(),
     })
