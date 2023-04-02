@@ -11,7 +11,7 @@
         </form>
         <form method="POST" action="{% url 'close' listing.id %}">
             {% csrf_token %}
-            <input type="submit" value="CLose Lising">
+            <input type="submit" value="Close Lising">
         </form> 
     {% endif %}
     <h4>Created by: {{ listing.user.username }}</h4>    
@@ -28,6 +28,11 @@
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Make Bid">
+        </form>
+        <form method ="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="add_watch" value="True">
+            <input type="submit" value="Add to Watchlist">
         </form>
     {% endif %}
     <img src="{{ listing.image_url }}" alt="Listing image" width="400px">

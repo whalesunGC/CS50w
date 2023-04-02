@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from .forms import ListingForm, BidForm
-from .models import Listing, Bid, User
+from .models import Listing, Bid, User, Watchlist
 
 
 def index(request):
@@ -126,15 +126,20 @@ def listing_page(request, pk):
     listing = Listing.objects.get(id=pk)
     top_bid = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('bid_value', flat=True).first()
     username = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('user__username', flat=True).first()
-    
-    if request.method == 'POST':
+    if request.method == 'POST' and request.POST.get('bid_value'):
         form = BidForm(request.POST, listing=listing, top_bid=top_bid)
         if form.is_valid():
             bid = form.save(commit=False)
             bid.listing = listing
             bid.user = request.user
             bid.save()
-            return HttpResponseRedirect(reverse('listing', args=[listing.id]))
+            user = request.user
+            if Watchlist.objects.filter(user=user).filter(listing=listing):
+                pass
+            else:
+                w = Watchlist(user=user, listing=listing)
+                w.save()
+            return HttpResponseRedirect('listing', args=[listing.id])
         else:
             return render(request, "auctions/listing.html", {
                 "listing" : listing,
@@ -142,6 +147,16 @@ def listing_page(request, pk):
                 "username" : username,
                 "form": form
             })
+    elif request.method == 'POST' and request.POST.get('add_watch'):
+        user = request.user
+        userid = User.objects.get(username=user).id
+        if Watchlist.objects.filter(user=user).filter(listing=listing):
+            w = Watchlist.objects.filter(user=user).filter(listing=listing)
+            w.delete()
+        else:
+            w = Watchlist(user=user, listing=listing)
+            w.save()
+        return HttpResponseRedirect(reverse('watchlist', args=[userid]))
     else:
         return render(request, "auctions/listing.html", {
         "listing": listing,
@@ -154,9 +169,12 @@ def listing_filter():
     '''  display all listings filtered by categories. '''
     pass
 
-def user_watchlist():
+def user_watchlist(request, pk):
     '''  display watchlist of logined user. '''
-    pass
+    context = Watchlist.objects.filter(user=pk)
+    return render(request, "auctions/watchlist.html", {
+        'context':context,
+    })
 
 def admin_interface():
     pass

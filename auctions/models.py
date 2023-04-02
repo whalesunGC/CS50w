@@ -52,3 +52,15 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.user} bid:${self.bid_value} on:{self.bid_date}"
+    
+class Watchlist(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-date_added"]
+
+    def __str__(self):
+        return f"{self.user} watchlists {self.listing}"
