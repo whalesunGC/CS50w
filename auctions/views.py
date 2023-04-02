@@ -113,6 +113,13 @@ def listing_delete(request, pk):
         listing = Listing.objects.get(id=pk)
         listing.delete()
         return HttpResponseRedirect(reverse("index"))
+    
+def listing_close(request, pk):
+    if request.method == "POST":
+        listing = Listing.objects.get(id=pk)
+        listing.open = False
+        listing.save()
+        return HttpResponseRedirect(reverse("index"))
 
 def listing_page(request, pk):
     ''' display selected listing.'''

@@ -8,6 +8,10 @@
         <form method="POST" action="{% url 'delete' listing.id%}">
             {% csrf_token %}
             <input type="submit" value="Delete Listing">
+        </form>
+        <form method="POST" action="{% url 'close' listing.id %}">
+            {% csrf_token %}
+            <input type="submit" value="CLose Lising">
         </form> 
     {% endif %}
     <h4>Created by: {{ listing.user.username }}</h4>    
