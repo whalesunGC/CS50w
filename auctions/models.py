@@ -34,10 +34,10 @@ class Comment(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     comment = models.TextField()
-    date = models.DateField()
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user} commented {self.comment} on {self.instance.listing.listing_name}"
+        return f"{self.user.username} commented {self.comment} on {self.listing.name}"
 
 class Bid(models.Model):
     # bid_start, bid_last, bid_count, bid_date

@@ -48,4 +48,24 @@
     {% endif %}
     <img src="{{ listing.image_url }}" alt="Listing image" width="400px">
     <div><span>{{ listing.description }}</span></div>
+    <div>
+        {% if user.is_authenticated %}
+            <form method="POST" action="">
+                {% csrf_token %}
+                {{ form_comment.as_p }}
+                <input type="submit" value="Comment!">
+            </form>
+        {% endif %}
+    </div>
+    <div>
+        {% if comments %}
+        <h4>Comments:</h4>
+        <hr>
+            {% for comment in comments %}
+                <p>{{ comment.comment }} by {{ comment.user }} on {{ comment.date|timesince }} ago</p>
+                <hr>
+            {% endfor %}
+        {% endif %}
+    </div>
+    
 {% endblock %}

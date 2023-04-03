@@ -1,5 +1,5 @@
 from django import forms
-from .models import Listing, Bid
+from .models import Listing, Bid, Comment
 
 class ListingForm(forms.ModelForm):
     class Meta:
@@ -28,4 +28,8 @@ class BidForm(forms.ModelForm):
             raise forms.ValidationError('Bid must be greater than current bid')
         return bid_value
     
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ["comment"]
     
