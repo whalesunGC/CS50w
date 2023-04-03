@@ -180,5 +180,17 @@ def user_watchlist(request, pk):
         'context':context,
     })
 
+def category(request):
+    categories = Listing.objects.filter(open=True).values_list("category", flat=True)
+    return render(request, "auctions/categories.html", {
+        "categories" : categories
+    })
+
+def filter(request, pk):
+    listings = Listing.objects.filter(category=pk)
+    return render(request, "auctions/categories.html", {
+        "listings":listings,
+    })
+
 def admin_interface():
     pass

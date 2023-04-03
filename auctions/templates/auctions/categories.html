@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html "%}
+
+{% block body %}
+    <h2>Categories</h2>
+    <ul>
+        {% for category in categories %}
+            <li><a href="{% url 'filter' category %}">{{ category }}</a></li>
+        {% endfor %}
+        {% for listing in listings %}
+            {% if listing.open %}     
+                <li>
+                    <div><h4>{{ listing.name }}</h4></div>
+                    <div><h4>Category: {{ listing.category }}</h4></div>
+                    {% with bids=listing.listing_bids.all|first %}
+                        {% if bids %}
+                            <h4>Current Bid: ${{ bids.bid_value }}.</h4>
+                        {% else %} 
+                            <div><h4>Starting Bid: ${{ listing.bid_start }}</h4></div>
+                        {% endif %}
+                    {% endwith %}
+                    <div><a href="{% url 'listing' listing.id %}"><img src="{{ listing.image_url }}" alt="image of listing" width="400"></a></div>
+                </li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% endblock %}

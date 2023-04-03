@@ -14,4 +14,6 @@ urlpatterns = [
     path("listing/<pk>", views.listing_page, name="listing"),
     path("filter/", views.listing_filter, name="filter"),
     path("watchlist/<pk>", views.user_watchlist, name="watchlist"),
+    path("category/", views.category, name="category"),
+    path("filter/<pk>", views.filter, name="filter"),
 ]
