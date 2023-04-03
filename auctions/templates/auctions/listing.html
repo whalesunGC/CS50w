@@ -1,7 +1,10 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    {% if user.is_authenticated and user.id == listing.user.id %}
+    {% if user.username == username and not listing.open %}
+    <h1>You Won!</h1>
+    {% endif %}
+    {% if user.is_authenticated and user.id == listing.user.id and listing.open %}
         <form method="GET" action="{% url 'edit' listing.id %}">
             <input type="submit" value="Edit Listing">     
         </form>
@@ -23,17 +26,25 @@
     {% else %}
         <h4>Starting Bid: ${{ listing.bid_start }}</h4>
     {% endif %}
-    {% if user.is_authenticated %}
+    {% if user.is_authenticated and listing.open %}
         <form method="POST" action="">
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Make Bid">
         </form>
-        <form method ="POST" action="">
-            {% csrf_token %}
-            <input type="hidden" name="add_watch" value="True">
-            <input type="submit" value="Add to Watchlist">
-        </form>
+        {% if watchlist %}
+            <form method="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="del_watch" value="True">
+                <input type="submit" value="Delete from Watchlist">
+            </form>
+        {% else %}
+            <form method ="POST" action="">
+                {% csrf_token %}
+                <input type="hidden" name="add_watch" value="True">
+                <input type="submit" value="Add to Watchlist">
+            </form>
+        {% endif %}
     {% endif %}
     <img src="{{ listing.image_url }}" alt="Listing image" width="400px">
     <div><span>{{ listing.description }}</span></div>

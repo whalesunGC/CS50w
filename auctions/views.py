@@ -126,6 +126,9 @@ def listing_page(request, pk):
     listing = Listing.objects.get(id=pk)
     top_bid = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('bid_value', flat=True).first()
     username = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('user__username', flat=True).first()
+    user = request.user
+    watchlist = Watchlist.objects.filter(user=user).filter(listing=listing)
+
     if request.method == 'POST' and request.POST.get('bid_value'):
         form = BidForm(request.POST, listing=listing, top_bid=top_bid)
         if form.is_valid():
@@ -145,23 +148,24 @@ def listing_page(request, pk):
                 "listing" : listing,
                 "bid" : top_bid,
                 "username" : username,
+                "watchlist" : watchlist,
                 "form": form
             })
     elif request.method == 'POST' and request.POST.get('add_watch'):
-        user = request.user
         userid = User.objects.get(username=user).id
-        if Watchlist.objects.filter(user=user).filter(listing=listing):
-            w = Watchlist.objects.filter(user=user).filter(listing=listing)
-            w.delete()
-        else:
-            w = Watchlist(user=user, listing=listing)
-            w.save()
+        w = Watchlist(user=user, listing=listing)
+        w.save()
         return HttpResponseRedirect(reverse('watchlist', args=[userid]))
+    elif request.method =="POST" and request.POST.get("del_watch"):
+        w = Watchlist.objects.filter(user=user).filter(listing=listing)
+        w.delete()
+        return HttpResponseRedirect(reverse('listing', args=[listing.id]))
     else:
         return render(request, "auctions/listing.html", {
         "listing": listing,
         "bid" : top_bid,
         "username" : username,
+        "watchlist" : watchlist,
         "form": BidForm(),
     })
 

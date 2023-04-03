@@ -8,12 +8,14 @@
             {% if listing.open %}     
                 <li>
                     <div><h4>{{ listing.name }}</h4></div>
-                    <div><h5>Category: {{ listing.category }}</h5></div>
-                    {% if bid.bid_value %}
-                    <div><h5>Current Bid: ${{ bid.bid_value }}</h5></div>
-                    {% else %}
-                    <div><h5>Starting Bid: ${{ listing.bid_start }}</h5></div>
-                    {% endif %}
+                    <div><h4>Category: {{ listing.category }}</h4></div>
+                    {% with bids=listing.listing_bids.all|first %}
+                        {% if bids %}
+                            <h4>Current Bid: ${{ bids.bid_value }}.</h4>
+                        {% else %} 
+                            <div><h4>Starting Bid: ${{ listing.bid_start }}</h4></div>
+                        {% endif %}
+                    {% endwith %}
                     <div><a href="{% url 'listing' listing.id %}"><img src="{{ listing.image_url }}" alt="image of listing" width="400"></a></div>
                 </li>
             {% endif %}
