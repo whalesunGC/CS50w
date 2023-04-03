@@ -127,7 +127,7 @@ def listing_page(request, pk):
     top_bid = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('bid_value', flat=True).first()
     username = Bid.objects.filter(listing=pk).order_by('-bid_value').values_list('user__username', flat=True).first()
     user = request.user
-    watchlist = Watchlist.objects.filter(user=user).filter(listing=listing)
+    watchlist = Watchlist.objects.filter(user=user.id).filter(listing=listing)
     comments = Comment.objects.filter(listing=listing)
 
     if request.method == 'POST' and request.POST.get('bid_value'):
