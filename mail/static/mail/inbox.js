@@ -22,7 +22,7 @@ function compose_email(email) {
   if (email) {
     document.querySelector('#compose-recipients').value = email.sender;
     document.querySelector('#compose-subject').value = `Re: ${email.subject}`;
-    document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote:`;
+    document.querySelector('#compose-body').value = `On ${email.timestamp} ${email.sender} wrote: \n ${email.body} \n ###########################\n`;
     
   } else {
     // Clear out composition fields
