@@ -1,5 +1,11 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    {%for content in context %}
+        <div class="post">
+            {{ content }}
+            {{ content.content}} on {{ content.created_at}}
+            likes: {{content.likecount}}
+        </div>
+    {% endfor%}
 {% endblock %}

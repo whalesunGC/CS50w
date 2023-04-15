@@ -4,11 +4,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+    context = Post.objects.all()
+    return render(request, "network/index.html", {
+        "context":context,
+    })
 
 
 def login_view(request):
@@ -61,3 +64,17 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+def profile(request, username):
+    context=User.objects.all()
+    posts = Post.objects.filter(user=request.user)
+    followers=User.objects.filter(following=request.user)
+    return render(request, "network/profile.html",{
+        "context":context,
+        "posts":posts,
+        "followers":followers,
+    })
+
+def post(request, id):
+    pass
+
