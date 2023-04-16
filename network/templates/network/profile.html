@@ -1,0 +1,26 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="profile">
+        <h2>{{ context }}</h2>
+        {% if user.is_authenticated and user != context %}
+            {% if context in user.following.all %}
+                <button>Unfollow</button>
+            {% else %}
+                <button>Follow</button>
+            {% endif %}
+        {% endif %} 
+        <h4>Followers: {{followers}} Following: {{following}} </h4>
+        <hr>
+        <h3>Posts:</h3>
+        {%for context in posts %}
+            <div class="post">
+                <a href="{% url 'profile' username=context.user.username %}">@{{ context.user }}</a>
+                <hr>
+                <p>{{ context.content}}</p>
+                <hr>
+                <p>{{ context.created_at}} likes: {{context.likecount}}</p>
+            </div>
+    {% endfor%}
+    </div>
+{% endblock %}

@@ -1,13 +1,11 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    {%for context in context %}
         <div class="post">
-            <a href="{% url 'profile' username=context.user.username %}">@{{ context.user }}</a>
+            <p>{{ context }}</p>
             <hr>
             <p>{{ context.content}}</p>
             <hr>
             <p>{{ context.created_at}} likes: {{context.likecount}}</p>
         </div>
-    {% endfor%}
 {% endblock %}

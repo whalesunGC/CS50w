@@ -66,15 +66,20 @@ def register(request):
         return render(request, "network/register.html")
 
 def profile(request, username):
-    context=User.objects.all()
-    posts = Post.objects.filter(user=request.user)
-    followers=User.objects.filter(following=request.user)
+    context=User.objects.get(username=username)
+    posts = Post.objects.filter(user=User.objects.get(username=username))
+    followers=User.objects.filter(following=User.objects.get(username=username)).count()
+    following=User.objects.filter(follower=User.objects.get(username=username)).count()
     return render(request, "network/profile.html",{
         "context":context,
         "posts":posts,
         "followers":followers,
+        "following":following,
     })
 
-def post(request, id):
-    pass
+def post(request, post_id):
+    context=Post.objects.get(id=post_id)
+    return render(request, "network/post.html",{
+        'context':context,
+    })
 
