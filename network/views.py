@@ -1,8 +1,11 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post
 
@@ -70,11 +73,13 @@ def profile(request, username):
     posts = Post.objects.filter(user=User.objects.get(username=username))
     followers=User.objects.filter(following=User.objects.get(username=username)).count()
     following=User.objects.filter(follower=User.objects.get(username=username)).count()
+    follower =User.objects.filter(follower=User.objects.get(username=request.user)).contains(context)
     return render(request, "network/profile.html",{
         "context":context,
         "posts":posts,
         "followers":followers,
         "following":following,
+        "follower":follower,
     })
 
 def post(request, post_id):
@@ -83,3 +88,16 @@ def post(request, post_id):
         'context':context,
     })
 
+@login_required
+@require_POST
+@csrf_exempt
+def follow(request, user_id):
+    user_to_follow = get_object_or_404(User, id=user_id)
+    user = request.user
+    if user_to_follow in user.following.all():
+        user.following.remove(user_to_follow)
+        followed = False
+    else:
+        user.following.add(user_to_follow)
+        followed = True
+    return JsonResponse({'followed': followed})

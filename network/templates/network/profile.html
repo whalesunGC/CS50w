@@ -2,12 +2,12 @@
 
 {% block body %}
     <div class="profile">
-        <h2>{{ context }}</h2>
+        <h2>{{ context.username }}</h2>
         {% if user.is_authenticated and user != context %}
-            {% if context in user.following.all %}
-                <button>Unfollow</button>
+            {% if follower %}
+            <button id="follow-button" data-user-id="{{ context.id }}" data-following="{{ follower }}">Unfollow</button>
             {% else %}
-                <button>Follow</button>
+            <button id="follow-button" data-user-id="{{ context.id }}" data-following="{{ follower }}">Follow</button>
             {% endif %}
         {% endif %} 
         <h4>Followers: {{followers}} Following: {{following}} </h4>
